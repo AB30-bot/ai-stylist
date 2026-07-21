@@ -14,6 +14,12 @@ const LS_MODEL = 'stylist.model';
 const LS_WARD  = 'stylist.wardrobe';
 const DEFAULT_MODEL = 'gemini-2.0-flash';
 
+// When the Cloudflare Worker proxy is deployed, put its URL here. Once set, the
+// app calls the proxy (which holds YOUR hidden key) and no longer asks users
+// for a key at all. Leave empty to fall back to "bring your own key" mode.
+const PROXY_URL = '';
+const useProxy = () => PROXY_URL.length > 0;
+
 // ---- tiny DOM helpers -----------------------------------------------------
 const $  = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
@@ -31,6 +37,7 @@ function init() {
   // restore settings into the form
   $('#apiKey').value = load(LS_KEY, '');
   $('#model').value  = load(LS_MODEL, DEFAULT_MODEL);
+  if (useProxy()) hideKeyUI();     // proxy holds the key — users never enter one
   refreshKeyDot();
 
   // navigation
@@ -76,7 +83,15 @@ function onSaveSettings() {
 }
 
 function refreshKeyDot() {
-  $('#statusDot').classList.toggle('ok', !!load(LS_KEY, ''));
+  $('#statusDot').classList.toggle('ok', useProxy() || !!load(LS_KEY, ''));
+}
+
+// Hide the "enter your key" section when the proxy is providing the key.
+function hideKeyUI() {
+  const k = $('#apiKey');
+  [k, k.previousElementSibling, k.nextElementSibling].forEach((el) => {
+    if (el) el.style.display = 'none';
+  });
 }
 
 function getKey()   { return load(LS_KEY, ''); }
@@ -90,7 +105,7 @@ async function onPhotoChosen(e) {
   e.target.value = '';                 // allow re-picking the same file later
   if (!file) return;
 
-  if (!getKey()) {
+  if (!useProxy() && !getKey()) {
     toast('Add your Gemini API key in Settings first');
     switchTab('settings');
     return;
@@ -141,8 +156,8 @@ async function analyzeItem(dataUrl) {
 //  Outfit suggestions
 // =====================================================================
 async function onSuggest() {
-  if (!getKey())        { toast('Add your Gemini API key in Settings first'); switchTab('settings'); return; }
-  if (wardrobe.length < 2) { toast('Add at least 2 items to your closet first'); switchTab('wardrobe'); return; }
+  if (!useProxy() && !getKey()) { toast('Add your Gemini API key in Settings first'); switchTab('settings'); return; }
+  if (wardrobe.length < 2)      { toast('Add at least 2 items to your closet first'); switchTab('wardrobe'); return; }
 
   try {
     showOverlay('Styling you…');
@@ -181,17 +196,29 @@ async function suggestOutfits(occ, notes) {
 //  Gemini REST call (browser -> Google, using the user's own key)
 // =====================================================================
 async function callGemini(parts) {
-  const url =
-    `https://generativelanguage.googleapis.com/v1beta/models/${getModel()}:generateContent?key=${encodeURIComponent(getKey())}`;
+  const payload = {
+    contents: [{ parts }],
+    generationConfig: { temperature: 0.7, responseMimeType: 'application/json' },
+  };
 
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{ parts }],
-      generationConfig: { temperature: 0.7, responseMimeType: 'application/json' },
-    }),
-  });
+  let res;
+  if (useProxy()) {
+    // Proxy mode: send to the Worker, which injects the hidden key. No key here.
+    res = await fetch(PROXY_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...payload, model: getModel() }),
+    });
+  } else {
+    // Bring-your-own-key mode: call Google directly with the user's key.
+    const url =
+      `https://generativelanguage.googleapis.com/v1beta/models/${getModel()}:generateContent?key=${encodeURIComponent(getKey())}`;
+    res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+  }
 
   if (!res.ok) {
     const detail = await res.text().catch(() => '');

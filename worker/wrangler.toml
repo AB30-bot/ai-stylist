@@ -1,0 +1,8 @@
+# Cloudflare Worker config for the AI Stylist key-proxy.
+# Deploy from this folder with:  wrangler deploy
+name = "ai-stylist-proxy"
+main = "worker.js"
+compatibility_date = "2026-07-01"
+
+# The Gemini key is NOT stored here. It is set as an encrypted secret:
+#   wrangler secret put GEMINI_KEY
