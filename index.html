@@ -1,0 +1,75 @@
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0f1115" />
+<title>AI Stylist — your closet, styled</title>
+<link rel="stylesheet" href="styles.css" />
+
+<div id="app">
+  <header class="topbar">
+    <h1>AI&nbsp;Stylist</h1>
+    <span id="statusDot" class="dot" title="API key status"></span>
+  </header>
+
+  <!-- ===== WARDROBE TAB ===== -->
+  <section id="tab-wardrobe" class="tab active">
+    <div class="section-head">
+      <h2>My wardrobe</h2>
+      <label class="btn primary">
+        + Add item
+        <input id="photoInput" type="file" accept="image/*" capture="environment" hidden />
+      </label>
+    </div>
+    <p id="wardrobeEmpty" class="empty">Your closet is empty. Tap <b>Add item</b> and take a photo of a piece of clothing — the AI tags it for you.</p>
+    <div id="wardrobeGrid" class="grid"></div>
+  </section>
+
+  <!-- ===== SUGGEST TAB ===== -->
+  <section id="tab-suggest" class="tab">
+    <h2>Style me</h2>
+    <label class="field-label">Occasion</label>
+    <div id="occasionChips" class="chips">
+      <button class="chip active" data-occ="Casual">Casual</button>
+      <button class="chip" data-occ="Work">Work</button>
+      <button class="chip" data-occ="Date">Date</button>
+      <button class="chip" data-occ="Sport">Sport</button>
+      <button class="chip" data-occ="Formal">Formal</button>
+    </div>
+    <label class="field-label" for="notes">Anything else? (weather, vibe…)</label>
+    <input id="notes" type="text" placeholder="e.g. it's cold and rainy" />
+    <button id="suggestBtn" class="btn primary big">✨ Suggest an outfit</button>
+    <div id="suggestions"></div>
+  </section>
+
+  <!-- ===== SETTINGS TAB ===== -->
+  <section id="tab-settings" class="tab">
+    <h2>Settings</h2>
+    <label class="field-label" for="apiKey">Your Gemini API key</label>
+    <input id="apiKey" type="password" placeholder="paste key here" autocomplete="off" />
+    <p class="hint">Stored only in this browser (never uploaded, never in the code).
+      Get a free key at <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>.</p>
+
+    <label class="field-label" for="model">Model</label>
+    <input id="model" type="text" placeholder="gemini-2.0-flash" />
+
+    <button id="saveSettings" class="btn primary">Save</button>
+
+    <hr />
+    <button id="exportBtn" class="btn">Export wardrobe (backup)</button>
+    <button id="clearBtn" class="btn danger">Clear wardrobe</button>
+  </section>
+
+  <!-- ===== NAV ===== -->
+  <nav class="tabbar">
+    <button class="navbtn active" data-tab="wardrobe">👕<span>Closet</span></button>
+    <button class="navbtn" data-tab="suggest">✨<span>Style me</span></button>
+    <button class="navbtn" data-tab="settings">⚙️<span>Settings</span></button>
+  </nav>
+</div>
+
+<!-- Loading overlay -->
+<div id="overlay" class="overlay hidden">
+  <div class="spinner"></div>
+  <p id="overlayText">Thinking…</p>
+</div>
+
+<script src="app.js"></script>

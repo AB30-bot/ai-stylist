@@ -1,0 +1,12 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log
+
+# local tooling
+.claude/
+.vscode/
+node_modules/
+
+# local backups exported from the app
+wardrobe-backup.json
