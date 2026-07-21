@@ -17,7 +17,7 @@ const DEFAULT_MODEL = 'gemini-2.0-flash';
 // When the Cloudflare Worker proxy is deployed, put its URL here. Once set, the
 // app calls the proxy (which holds YOUR hidden key) and no longer asks users
 // for a key at all. Leave empty to fall back to "bring your own key" mode.
-const PROXY_URL = '';
+const PROXY_URL = 'https://ai-stylist-proxy.ab30-apps.workers.dev';
 const useProxy = () => PROXY_URL.length > 0;
 
 // ---- tiny DOM helpers -----------------------------------------------------
