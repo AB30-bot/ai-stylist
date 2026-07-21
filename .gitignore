@@ -7,6 +7,8 @@ Thumbs.db
 .claude/
 .vscode/
 node_modules/
+.wrangler/
+worker/.wrangler/
 
 # local backups exported from the app
 wardrobe-backup.json
