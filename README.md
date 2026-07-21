@@ -5,7 +5,7 @@ suggestions. Snap a picture of a garment, an AI vision model tags it
 automatically, and the app builds complete outfits from your wardrobe for any
 occasion.
 
-**Live demo:** _(added after GitHub Pages is enabled — see below)_
+**Live demo:** <https://ab30-bot.github.io/ai-stylist/>
 
 ![screens](docs/preview.png)
 
