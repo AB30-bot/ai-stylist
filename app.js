@@ -12,7 +12,7 @@
 const LS_KEY   = 'stylist.apiKey';
 const LS_MODEL = 'stylist.model';
 const LS_WARD  = 'stylist.wardrobe';
-const DEFAULT_MODEL = 'gemini-2.0-flash';
+const DEFAULT_MODEL = 'gemini-2.5-flash';
 
 // When the Cloudflare Worker proxy is deployed, put its URL here. Once set, the
 // app calls the proxy (which holds YOUR hidden key) and no longer asks users

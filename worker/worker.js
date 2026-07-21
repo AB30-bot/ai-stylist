@@ -14,8 +14,8 @@
 const ALLOWED_ORIGIN = 'https://ab30-bot.github.io';
 
 // Only these models are allowed through, so a caller can't request an expensive one.
-const MODEL_ALLOWLIST = ['gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-1.5-flash'];
-const DEFAULT_MODEL = 'gemini-2.0-flash';
+const MODEL_ALLOWLIST = ['gemini-2.5-flash', 'gemini-flash-latest', 'gemini-2.5-flash-lite'];
+const DEFAULT_MODEL = 'gemini-2.5-flash';
 
 export default {
   async fetch(request, env) {
